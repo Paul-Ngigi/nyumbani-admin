@@ -27,7 +27,7 @@ export default function RootLayout({
         <AppContext>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
