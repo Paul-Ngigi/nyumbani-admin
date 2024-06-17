@@ -19,13 +19,11 @@ import UseMoment from "@/components/shared/use-moment";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { baseUrl } from "@/constants/urls";
-import { useAuthContext } from "@/context/auth-context/auth";
 import { IPagination } from "@/interfaces/pagination.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoCloudDownloadOutline } from "react-icons/io5";
@@ -41,13 +39,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { IOrganisation } from "@/interfaces/organisation.interface";
+import PaginationComponent from "../shared/Pagination";
 import { AddOrganisationsForm } from "./AddOrganisationsForm";
 
 export default function ListOrganisations() {
-  const router = useRouter();
-
-  const { logOut } = useAuthContext();
-
   const [data, setData] = useState<IOrganisation[]>([]); // Organisations data
 
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
@@ -152,6 +147,13 @@ export default function ListOrganisations() {
     mutation.mutate(payload);
   }, [pagination]);
 
+  const handlePageChange = (newSkip: number) => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      skip: newSkip,
+    }));
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -212,25 +214,14 @@ export default function ListOrganisations() {
         />
       </div>
 
-      <div className="flex items-center justify-center space-x-2">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+      <div className="flex items-center justify-center">
+        <PaginationComponent
+          skip={pagination.skip}
+          limit={pagination.limit}
+          dataLoading={isLoading}
+          dataLength={data.length}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );

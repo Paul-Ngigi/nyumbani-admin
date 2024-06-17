@@ -6,6 +6,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
+import ListComplaints from "@/components/complaints/ListComplaints";
 
 
 export default function Page() {  
@@ -15,14 +16,14 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments">Users</BreadcrumbLink>
+              <BreadcrumbLink href="/complaints">Complaints</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Users</h1>
+        <h1 className="font-bold">Complaints</h1>
 
-        <ListUsers/>
+        <ListComplaints/>
       </div>
     </BaseLayout>
   );

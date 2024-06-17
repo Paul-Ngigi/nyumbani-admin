@@ -13,19 +13,11 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { processHttpErrors } from "@/actions/ProcessHttpErrors";
+import { listUsers } from "@/actions/UsersActions";
 import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { baseUrl } from "@/constants/urls";
 import { useAuthContext } from "@/context/auth-context/auth";
 import { IPagination } from "@/interfaces/pagination.interface";
@@ -33,25 +25,33 @@ import { IUser } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
-import { AddUserForm } from "./AddUserForm";
+import { signOut } from 'next-auth/react';
+import { IApartment } from "@/interfaces/apartment.interface";
 import PaginationComponent from "../shared/Pagination";
 
-export default function ListUsers() {
-  const [data, setData] = useState<IUser[]>([]); // Users data
+export default function ListLeaveNotices() {
+  const router = useRouter();
+
+  const { logOut } = useAuthContext();
+
+  const [data, setData] = useState<IApartment[]>([]); // Apartments data
+
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
+
   const [pagination, setPagination] = useState<IPagination>({
-    limit: 10,
+    limit: 4,
     skip: 0,
     sort: {
       _timestamp: -1,
     },
   });
+
   const [fields, setFields] = useState<string[]>([
     "_id",
     "userName",
@@ -82,13 +82,13 @@ export default function ListUsers() {
     [payload]
   );
 
-  const fetchUsers = async (data: any) => {
-    let url = "/users";
+  const fetchApartments = async (data: any) => {
+    let url = "/apartments";
     return await axiosClient.post(url, data);
   };
 
   const [searchParams, setSearchParams] = useState<any>({
-    url: `${baseUrl}/listusers`,
+    url: `${baseUrl}/listapartments`,
     searchFields: [
       "_id",
       "firstName",
@@ -106,13 +106,19 @@ export default function ListUsers() {
   });
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+
   const [rowSelection, setRowSelection] = useState({});
 
   const mutation: any = useMutation({
-    mutationKey: ["listUsers"],
-    mutationFn: (values) => fetchUsers(values),
+    mutationKey: ["listApartments"],
+    mutationFn: (values) => fetchApartments(values),
     onMutate: () => {
       setIsLoading(true);
     },
@@ -128,7 +134,7 @@ export default function ListUsers() {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: "/auth/login" });
+          signOut({ callbackUrl: '/auth/login' });
         } else {
           toast({
             variant: "warning",
@@ -169,6 +175,7 @@ export default function ListUsers() {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -190,20 +197,13 @@ export default function ListUsers() {
           onInputEmpty={handleInputEmpty}
         />
         <div className="flex items-center gap-3">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                Add User <IoPersonAddSharp className="ml-2 h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add User</DialogTitle>
-                <DialogDescription>Register a new user</DialogDescription>
-              </DialogHeader>
-              <AddUserForm />
-            </DialogContent>
-          </Dialog>
+          <Button
+            variant="outline"
+            className="ml-auto"
+            onClick={() => router.push("apartments/add-apartment")}
+          >
+            Add Apartment <IoPersonAddSharp className="ml-2 h-4 w-4" />
+          </Button>
           <Button variant="outline" className="ml-auto">
             Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
           </Button>
@@ -231,19 +231,16 @@ export default function ListUsers() {
     </>
   );
 }
-const getTrueRoles = (userRoles: any[]): string[] => {
-  if (userRoles && userRoles.length > 0) {
-    const trueRoles = userRoles
-      .filter((role) => Object.values(role)[0] === true)
-      .map((role) => Object.keys(role)[0]);
 
-    return trueRoles;
-  } else {
-    return [];
-  }
+const getTrueRoles = (userRoles: any[]): string[] => {
+  const trueRoles = userRoles
+    .filter((role) => Object.values(role)[0] === true)
+    .map((role) => Object.keys(role)[0]);
+
+  return trueRoles;
 };
 
-const columns: ColumnDef<IUser>[] = [
+const columns: ColumnDef<IApartment>[] = [
   {
     accessorKey: "date",
     header: ({ column }) => {
@@ -291,16 +288,16 @@ const columns: ColumnDef<IUser>[] = [
             <div>
               <span className="font-medium text-sm">Full Name:</span>{" "}
               <span className="text-xs capitalize">
-                {user?.firstName ?? ""} {user?.lastName ?? ""}
+                {/* {user?.firstName ?? ""} {user?.lastName ?? ""} */}
               </span>
             </div>
             <div>
               <span className="font-medium text-sm">Email:</span>{" "}
-              <span className="text-xs">{user?.email ?? "N/A"}</span>
+              {/* <span className="text-xs">{user?.email ?? "N/A"}</span> */}
             </div>
             <div>
               <span className="font-medium text-sm">Phone Number:</span>{" "}
-              <span className="text-xs">{user?.telephone1 ?? "N/A"}</span>
+              {/* <span className="text-xs">{user?.telephone1 ?? "N/A"}</span> */}
             </div>
           </div>
         </div>
@@ -311,15 +308,15 @@ const columns: ColumnDef<IUser>[] = [
     accessorKey: "roles",
     header: "Roles",
     cell: ({ row }) => {
-      const user = row.original;
-      const roles: string[] = getTrueRoles(user.roles);
+      // const user = row.original;
+      // const roles: string[] = getTrueRoles(user.roles);
       return (
         <div className="flex gap-2 items-center">
-          {roles.map((role, index) => (
+          {/* {roles.map((role, index) => (
             <Badge key={index} variant="outline">
               {role}
             </Badge>
-          ))}
+          ))} */}
         </div>
       );
     },
@@ -330,9 +327,10 @@ const columns: ColumnDef<IUser>[] = [
     cell: ({ row }) => {
       const user = row.original;
       return (
-        <Badge variant={user.active ? "outline" : "destructive"}>
-          {user.active ? "Active" : "Deactived"}
-        </Badge>
+        <></>
+        // <Badge variant={user.active ? "outline" : "destructive"}>
+        //   {user.active ? "Active" : "Deactived"}
+        // </Badge>
       );
     },
   },

@@ -33,18 +33,17 @@ import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
 import { signOut } from 'next-auth/react';
 import { IApartment } from "@/interfaces/apartment.interface";
+import PaginationComponent from "../shared/Pagination";
 
 export default function ListApartments() {
   const router = useRouter();
-
-  const { logOut } = useAuthContext();
 
   const [data, setData] = useState<IApartment[]>([]); // Apartments data
 
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
 
   const [pagination, setPagination] = useState<IPagination>({
-    limit: 4,
+    limit: 10,
     skip: 0,
     sort: {
       _timestamp: -1,
@@ -87,7 +86,7 @@ export default function ListApartments() {
   };
 
   const [searchParams, setSearchParams] = useState<any>({
-    url: `${baseUrl}/listApartments`,
+    url: `${baseUrl}/listapartments`,
     searchFields: [
       "_id",
       "firstName",
@@ -161,6 +160,13 @@ export default function ListApartments() {
     mutation.mutate(payload);
   }, [pagination]);
 
+  const handlePageChange = (newSkip: number) => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      skip: newSkip,
+    }));
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -211,25 +217,14 @@ export default function ListApartments() {
         />
       </div>
 
-      <div className="flex items-center justify-center space-x-2">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+      <div className="flex items-center justify-center">
+        <PaginationComponent
+          skip={pagination.skip}
+          limit={pagination.limit}
+          dataLoading={isLoading}
+          dataLength={data.length}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );

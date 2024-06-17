@@ -15,12 +15,12 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments">Users</BreadcrumbLink>
+              <BreadcrumbLink href="/roles-permissions">Roles & Permissions</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Users</h1>
+        <h1 className="font-bold">Roles & Permissions</h1>
 
         <ListUsers/>
       </div>

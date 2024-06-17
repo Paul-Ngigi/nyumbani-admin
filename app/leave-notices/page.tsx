@@ -6,6 +6,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
+import ListLeaveNotices from "@/components/leave-notices/ListLeaveNotices";
 
 
 export default function Page() {  
@@ -15,14 +16,14 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments">Users</BreadcrumbLink>
+              <BreadcrumbLink href="/leave-notices">Leave Notices</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Users</h1>
+        <h1 className="font-bold">Leave Notices</h1>
 
-        <ListUsers/>
+        <ListLeaveNotices/>
       </div>
     </BaseLayout>
   );

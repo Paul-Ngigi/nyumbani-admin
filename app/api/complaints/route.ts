@@ -3,7 +3,7 @@ import { baseUrl } from "@/constants/urls";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const url = `${baseUrl}/listapartments`;
+  const url = `${baseUrl}/listComplaints`;
   const body = await req.json();  
   const response = await makeRequest<any>(req, "POST", url, body);
   if (response.error) {
