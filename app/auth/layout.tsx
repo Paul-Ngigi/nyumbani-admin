@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Logo from "@/components/Logo";
-import { ModeToggle } from "@/components/theme-toggle";
+import Image from "next/image";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (

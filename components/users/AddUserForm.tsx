@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,11 +15,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useState } from "react";
 import axiosClient from "@/lib/axios-client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "../ui/use-toast";
+
 const formSchema = z.object({
   firstName: z.string().min(2, {
     message: "First name must be at least 2 characters.",
@@ -50,21 +52,35 @@ export function AddUserForm() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const addUser = async (data: any) => {
+    let url = "/users/new";
+    return await axiosClient.post(url, data);
+  };
+
   const mutation = useMutation({
     mutationKey: ["addUser"],
     mutationFn: (values: any) => addUser(values),
     onMutate: () => {
       setIsLoading(true);
     },
-    onSuccess: () => {
-      toast.success("Success");
+    onSuccess: () => {      
+      setIsLoading(false);
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "User created successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["listUsers"] });
       setIsLoading(false);
       router.push("/users");
     },
     onError: (err) => {
-      toast.error(err.message);
       setIsLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Ooops! Something went wrong",
+        description: processHttpErrors(err),
+      });
     },
   });
 
@@ -175,8 +191,3 @@ export function AddUserForm() {
     </Form>
   );
 }
-
-const addUser = async (data: any) => {
-  let url = "/users/new";
-  return await axiosClient.post(url, data);
-};

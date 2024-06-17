@@ -21,19 +21,19 @@ import {
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
-interface ReusableTableProps<T> {
+interface ApartmentsTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   rowNavigation?: (row: T) => string;
   isLoading: boolean;
 }
 
-export default function AgentsTable<T>({
+export default function ApartmentsTable<T>({
   data,
   columns,
   rowNavigation,
   isLoading,
-}: ReusableTableProps<T>) {
+}: ApartmentsTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -126,7 +126,7 @@ export default function AgentsTable<T>({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No agent records found.
+                    No results.
                   </TableCell>
                 </TableRow>
               )}

@@ -1,76 +1,56 @@
-"use client";
-
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { usePathname, useSearchParams } from "next/navigation";
-import { FC } from "react";
+import React from "react";
+import { Button } from "../ui/button";
 
 interface PaginationProps {
-  pages: number;
+  skip: number;
+  limit: number;
+  dataLoading: boolean;
+  dataLength: number;
+  onPageChange: (newSkip: number) => void;
 }
 
-const EPagination: FC<PaginationProps> = ({ pages }) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
-
-  const renderPaginationLinks = () => {
-    if (pages <= 0) {
-      // Handle the case where pages is not a valid positive number
-      console.error("Invalid value for 'pages'");
-      return null;
+const PaginationComponent: React.FC<PaginationProps> = ({
+  skip,
+  limit,
+  dataLoading,
+  dataLength,
+  onPageChange,
+}) => {
+  const goToPrevPage = () => {
+    let newSkip = skip - limit;
+    if (newSkip < 0) {
+      newSkip = 0;
     }
+    onPageChange(newSkip);
+  };
 
-    return [...Array(pages > 5 ? 5 : pages)].map((_, index) => (
-      <PaginationItem key={index}>
-        <PaginationLink
-          isActive={currentPage === index + 1}
-          href={`${pathname}?${new URLSearchParams({
-            ...Object.fromEntries(searchParams.entries()),
-            page: String(index + 1),
-          }).toString()}`}
-        >
-          {index + 1}
-        </PaginationLink>
-      </PaginationItem>
-    ));
+  const goToNextPage = () => {
+    const newSkip = skip + limit;
+    onPageChange(newSkip);
   };
 
   return (
-    <div className="w-full">
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href={`${pathname}?${new URLSearchParams({
-                ...Object.fromEntries(searchParams.entries()),
-                page: String(currentPage > 1 ? currentPage - 1 : currentPage),
-              }).toString()}`}
-            />
-          </PaginationItem>
+    <div className="flex gap-3">
+      {!dataLoading && (
+        <Button
+          variant={"outline"}
+          onClick={goToPrevPage}
+          disabled={skip === 0}
+        >
+          Previous
+        </Button>
+      )}
 
-          {renderPaginationLinks()}
-
-          <PaginationItem>
-            <PaginationNext
-              href={`${pathname}?${new URLSearchParams({
-                ...Object.fromEntries(searchParams.entries()),
-                page: String(
-                  currentPage < pages ? currentPage + 1 : currentPage
-                ),
-              }).toString()}`}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      {!dataLoading && dataLength === limit && (
+        <Button
+          variant={"outline"}
+          onClick={goToNextPage}          
+        >
+          Next
+        </Button>
+      )}
     </div>
   );
 };
 
-export default EPagination;
+export default PaginationComponent;

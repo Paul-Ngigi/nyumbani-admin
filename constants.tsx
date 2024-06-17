@@ -1,4 +1,5 @@
 import { BsExclamationOctagon } from "react-icons/bs";
+import { CgOrganisation } from "react-icons/cg";
 import { FaUsers } from "react-icons/fa";
 import { GiAutoRepair, GiAwareness } from "react-icons/gi";
 import { IoIosNotificationsOutline } from "react-icons/io";
@@ -12,55 +13,55 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
     title: "Dashboard",
     path: "/",
     icon: <RxDashboard />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
-    title: "Agents",
-    path: "/agents",
-    icon: <FaUsers />,
-    roles: ["admin", "superadmin"],
+    title: "Organisations",
+    path: "/organisations",
+    icon: <CgOrganisation />,
+    roles: ["SUPER_ADMIN"],
   },
   {
     title: "Users",
     path: "/users",
     icon: <FaUsers />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Apartments",
     path: "/apartments",
     icon: <MdApartment />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Inquiries",
     path: "/inquiries",
     icon: <SlQuestion />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Complaints",
     path: "/complaints",
     icon: <BsExclamationOctagon />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Leave Notices",
     path: "/leave-notices",
     icon: <GiAwareness />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Repairs",
     path: "/repairs",
     icon: <GiAutoRepair />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Notifications",
     path: "/notifications",
     icon: <IoIosNotificationsOutline />,
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   {
     title: "Transactions",
@@ -72,7 +73,7 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
       { title: "Mobile", path: "/transactions/mobile" },
       { title: "Card", path: "/transactions/card" },
     ],
-    roles: ["admin", "superadmin", "agent"],
+    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
   },
   // {
   //   title: "User Manual",

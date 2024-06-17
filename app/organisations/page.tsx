@@ -1,4 +1,4 @@
-import ListAgents from "@/components/agents/ListAgents";
+import ListOrganisations from "@/components/organisations/ListOrganisations";
 import BaseLayout from "@/components/shared/BaseLayout";
 import {
   Breadcrumb,
@@ -14,14 +14,16 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/agents">Agents</BreadcrumbLink>
+              <BreadcrumbLink href="/organisations">
+                Organisations
+              </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Agents</h1>
+        <h1 className="font-bold">Organisations</h1>
 
-        <ListAgents />
+        <ListOrganisations />
       </div>
     </BaseLayout>
   );

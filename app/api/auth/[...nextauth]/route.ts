@@ -32,13 +32,16 @@ const handler = NextAuth({
 
         console.log("********* Finished validating user ***********");
 
-        if (res && res.data.Status === 200) {                    
+        if (res && res.data.Status === 200) {
           const user = await res.data.Payload;
-          const jwt = user.token;          
+          const jwt = user.token;
+          const roles = user.roles;          
+
           return {
             ...credentials,
             jwt,
-          };          
+            roles
+          };
         }
 
         return null;
@@ -52,6 +55,7 @@ const handler = NextAuth({
         return {
           ...token,
           jwt: user.jwt,
+          roles: user.roles
         };
       }
       return token;
@@ -59,6 +63,7 @@ const handler = NextAuth({
     async session({ session, token }) {
       if (token) {
         session.jwt = token.jwt;
+        session.roles = token.roles;
       }
       return session;
     },

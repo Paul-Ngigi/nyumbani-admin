@@ -13,70 +13,153 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
+import { listUsers } from "@/actions/UsersActions";
 import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { baseUrl } from "@/constants/urls";
+import { useAuthContext } from "@/context/auth-context/auth";
 import { IPagination } from "@/interfaces/pagination.interface";
 import { IUser } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axios-client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
-import { toast } from "sonner";
-import AgentsTable from "./ApartmentsTable";
-import ApartmentsTable from "./ApartmentsTable";
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
+import Search from "../shared/Search";
+import { toast } from "../ui/use-toast";
+import { signOut } from 'next-auth/react';
+import { IApartment } from "@/interfaces/apartment.interface";
 
 export default function ListApartments() {
   const router = useRouter();
 
-  const [data, setData] = useState<IUser[]>([]);
+  const { logOut } = useAuthContext();
+
+  const [data, setData] = useState<IApartment[]>([]); // Apartments data
+
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
+
   const [pagination, setPagination] = useState<IPagination>({
-    limit: 10,
+    limit: 4,
     skip: 0,
     sort: {
       _timestamp: -1,
     },
   });
-  const [fields, setFields] = useState<string[]>([]);
+
+  const [fields, setFields] = useState<string[]>([
+    "_id",
+    "userName",
+    "firstName",
+    "lastName",
+    "email",
+    "phoneNumber",
+    "_timestamp",
+    "roles",
+  ]);
 
   const [payload, setPayload] = useState<any>({
     fields: fields,
     pagination: pagination,
   });
 
-  const [searchItem, setSearchItem] = useState<string>("");
+  // Search
+  const handleSearchResults = (results: any[]) => {
+    setData(results);
+  };
+
+  const handleInputEmpty = useCallback(
+    (isEmpty: boolean) => {
+      if (isEmpty) {
+        mutation.mutate(payload);
+      }
+    },
+    [payload]
+  );
+
+  const fetchApartments = async (data: any) => {
+    let url = "/apartments";
+    return await axiosClient.post(url, data);
+  };
+
+  const [searchParams, setSearchParams] = useState<any>({
+    url: `${baseUrl}/listApartments`,
+    searchFields: [
+      "_id",
+      "firstName",
+      "lastName",
+      "email",
+      "phoneNumber",
+      "idNumber",
+      "kraPin",
+      "_timestamp",
+    ],
+    customQuery: {
+      fields: fields,
+      pagination: pagination,
+    },
+  });
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
 
-  const { data: resp, isLoading } = useQuery({
-    queryKey: ["listApartments"],
-    queryFn: () => fetchApartments(payload),
+  const [rowSelection, setRowSelection] = useState({});
+
+  const mutation: any = useMutation({
+    mutationKey: ["listApartments"],
+    mutationFn: (values) => fetchApartments(values),
+    onMutate: () => {
+      setIsLoading(true);
+    },
+    onSuccess: (data) => {
+      setIsLoading(false);
+      const res = data.data.data;
+      if (res.Status === 200) {
+        setData(res.Payload);
+      } else {
+        if (res.Status === 401) {
+          toast({
+            variant: "destructive",
+            title: "Invalid token",
+            description: "User token has expired",
+          });
+          signOut({ callbackUrl: '/auth/login' });
+        } else {
+          toast({
+            variant: "warning",
+            title: res.Message,
+            description: res.Payload,
+          });
+        }
+      }
+    },
+    onError: (err: any) => {
+      setIsLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Ooops! Something went wrong",
+        description: processHttpErrors(err),
+      });
+    },
   });
-
-  const initiateSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
 
   useEffect(() => {
-    if (resp) {
-      const response = resp.data.data;
-      if (response.Status === 200) {
-        setData(response.Payload);
-      } else {
-        toast.warning(response.Payload);
-      }
-    }
-  });
+    mutation.mutate(payload);
+  }, []);
+
+  useEffect(() => {
+    mutation.mutate(payload);
+  }, [pagination]);
 
   const table = useReactTable({
     data,
@@ -99,15 +182,19 @@ export default function ListApartments() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:justify-between items-center">
-        <Input placeholder="Search user..." className="max-w-sm" />
+      <div className="flex justify-between items-center">
+        <Search
+          searchParams={searchParams}
+          onSearchResults={handleSearchResults}
+          onInputEmpty={handleInputEmpty}
+        />
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
             className="ml-auto"
-            onClick={() => router.push("users/add-user")}
+            onClick={() => router.push("apartments/add-apartment")}
           >
-            Add Apartment(s) <IoPersonAddSharp className="ml-2 h-4 w-4" />
+            Add Apartment <IoPersonAddSharp className="ml-2 h-4 w-4" />
           </Button>
           <Button variant="outline" className="ml-auto">
             Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
@@ -116,10 +203,10 @@ export default function ListApartments() {
       </div>
 
       <div className="rounded-md border">
-        <ApartmentsTable
+        <AppTable
           data={data}
           columns={columns}
-          rowNavigation={(row) => `/apartments/${row._id}`}
+          rowNavigation={(row) => `/users/${row._id}`}
           isLoading={isLoading}
         />
       </div>
@@ -156,12 +243,7 @@ const getTrueRoles = (userRoles: any[]): string[] => {
   return trueRoles;
 };
 
-const fetchApartments = async (data: any) => {
-  let url = "/apartments";
-  return await axiosClient.post(url, data);
-};
-
-export const columns: ColumnDef<IUser>[] = [
+const columns: ColumnDef<IApartment>[] = [
   {
     accessorKey: "date",
     header: ({ column }) => {
@@ -209,16 +291,16 @@ export const columns: ColumnDef<IUser>[] = [
             <div>
               <span className="font-medium text-sm">Full Name:</span>{" "}
               <span className="text-xs capitalize">
-                {user?.firstName ?? ""} {user?.lastName ?? ""}
+                {/* {user?.firstName ?? ""} {user?.lastName ?? ""} */}
               </span>
             </div>
             <div>
               <span className="font-medium text-sm">Email:</span>{" "}
-              <span className="text-xs">{user?.email ?? "N/A"}</span>
+              {/* <span className="text-xs">{user?.email ?? "N/A"}</span> */}
             </div>
             <div>
               <span className="font-medium text-sm">Phone Number:</span>{" "}
-              <span className="text-xs">{user?.telephone1 ?? "N/A"}</span>
+              {/* <span className="text-xs">{user?.telephone1 ?? "N/A"}</span> */}
             </div>
           </div>
         </div>
@@ -229,15 +311,15 @@ export const columns: ColumnDef<IUser>[] = [
     accessorKey: "roles",
     header: "Roles",
     cell: ({ row }) => {
-      const user = row.original;
-      const roles: string[] = getTrueRoles(user.roles);
+      // const user = row.original;
+      // const roles: string[] = getTrueRoles(user.roles);
       return (
         <div className="flex gap-2 items-center">
-          {roles.map((role, index) => (
-            <Badge key={index} variant="default">
+          {/* {roles.map((role, index) => (
+            <Badge key={index} variant="outline">
               {role}
             </Badge>
-          ))}
+          ))} */}
         </div>
       );
     },
@@ -248,9 +330,10 @@ export const columns: ColumnDef<IUser>[] = [
     cell: ({ row }) => {
       const user = row.original;
       return (
-        <Badge variant={user.active ? "default" : "destructive"}>
-          {user.active ? "Active" : "Deactivated"}
-        </Badge>
+        <></>
+        // <Badge variant={user.active ? "outline" : "destructive"}>
+        //   {user.active ? "Active" : "Deactived"}
+        // </Badge>
       );
     },
   },

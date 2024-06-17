@@ -15,19 +15,24 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useState } from "react";
 import axiosClient from "@/lib/axios-client";
 import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
+
+interface AddOrganisationsFormProps {
+  onClose?: () => void;
+}
 
 
 const formSchema = z.object({
+  name: z.string(),
   adminId: z.string(),
-  board_no: z.string(),  
-  kraImage: z.string(),  
+  board_no: z.string(),    
 });
 
-export function AddAgentForm() {
+export function AddOrganisationsForm({ onClose = () => {} }: AddOrganisationsFormProps) {
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -35,29 +40,39 @@ export function AddAgentForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const mutation = useMutation({
-    mutationKey: ["addUser"],
-    mutationFn: (values: any) => addUser(values),
+    mutationKey: ["addOrganisation"],
+    mutationFn: (values: any) => addOrganisation(values),
     onMutate: () => {
       setIsLoading(true);
     },
-    onSuccess: () => {
-      toast.success("Success");
-      queryClient.invalidateQueries({ queryKey: ["listUsers"] });
+    onSuccess: () => {      
       setIsLoading(false);
-      router.push("/users");
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "Organisation created successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["listOrganisations"] });
+      onClose();            
     },
     onError: (err) => {
-      toast.error(err.message);
       setIsLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Ooops! Something went wrong",
+        description: processHttpErrors(err),
+      });
     },
   });
 
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // defaultValues: {     
-    //   kraPin: "",
-    //   earb_no: "",
-    // },
+    defaultValues: {     
+      name: "",
+      adminId: "",
+      board_no: ""
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -66,15 +81,15 @@ export function AddAgentForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">        
         <FormField
           control={form.control}
-          name="adminId"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Paul" {...field} />
+                <Input placeholder="Organisation Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,12 +97,12 @@ export function AddAgentForm() {
         />
         <FormField
           control={form.control}
-          name="earb_no"
+          name="board_no"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel>Board Number</FormLabel>
               <FormControl>
-                <Input placeholder="Ngigi" className="input-field" {...field} />
+                <Input placeholder="Board Number" className="input-field" {...field} />
               </FormControl>
 
               <FormMessage />
@@ -96,13 +111,13 @@ export function AddAgentForm() {
         />
         <FormField
           control={form.control}
-          name="kraImage"
+          name="adminId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel>Admin Id</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="paul@gmail.com"
+                  placeholder="Organisation Admin Id"
                   className="input-field"
                   {...field}
                 />
@@ -120,7 +135,7 @@ export function AddAgentForm() {
   );
 }
 
-const addUser = async (data: any) => {
-  let url = "/users/new";
+const addOrganisation = async (data: any) => {
+  let url = "/organisations/new";
   return await axiosClient.post(url, data);
 };

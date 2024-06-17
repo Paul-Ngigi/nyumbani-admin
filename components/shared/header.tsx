@@ -26,8 +26,7 @@ const Header = () => {
   const selectedLayout = useSelectedLayoutSegment();
 
   const handleLogout = async () => {
-    await signOut();
-    await logOut;     
+    signOut({ callbackUrl: '/auth/login' });
   };
 
   return (

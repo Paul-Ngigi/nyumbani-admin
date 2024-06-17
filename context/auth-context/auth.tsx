@@ -6,6 +6,7 @@ import { IUser } from "@/interfaces/user.interface";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
+import { signOut } from 'next-auth/react';
 
 interface IAuthContext {
   user: IUser | null;
@@ -20,7 +21,7 @@ export const AuthContext = React.createContext<IAuthContext>(
   {} as IAuthContext
 );
 
-export function AuthContextProvider(props: { children: React.ReactNode }) {
+export function AuthContextProvider(props: { children: React.ReactNode }) { 
   const { data: session, status } = useSession();
 
   const router = useRouter();
@@ -36,6 +37,15 @@ export function AuthContextProvider(props: { children: React.ReactNode }) {
   useEffect(() => {
     if (status === "loading") {
       setLoadingUser(true);
+      const handleBeforeUnload = (event: BeforeUnloadEvent) => {      
+        signOut({ callbackUrl: '/auth/login' });
+      };
+  
+      window.addEventListener('beforeunload', handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
     }
 
     if (session && status === "authenticated") {

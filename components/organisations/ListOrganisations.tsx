@@ -18,6 +18,20 @@ import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { baseUrl } from "@/constants/urls";
+import { useAuthContext } from "@/context/auth-context/auth";
+import { IPagination } from "@/interfaces/pagination.interface";
+import axiosClient from "@/lib/axios-client";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowUpDown } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+import Search from "../shared/Search";
+import { toast } from "../ui/use-toast";
+
 import {
   Dialog,
   DialogContent,
@@ -26,29 +40,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { baseUrl } from "@/constants/urls";
-import { useAuthContext } from "@/context/auth-context/auth";
-import { IPagination } from "@/interfaces/pagination.interface";
-import { IUser } from "@/interfaces/user.interface";
-import axiosClient from "@/lib/axios-client";
-import { useMutation } from "@tanstack/react-query";
-import { ArrowUpDown } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
-import Search from "../shared/Search";
-import { toast } from "../ui/use-toast";
-import { AddUserForm } from "./AddUserForm";
-import PaginationComponent from "../shared/Pagination";
+import { IOrganisation } from "@/interfaces/organisation.interface";
+import { AddOrganisationsForm } from "./AddOrganisationsForm";
 
-export default function ListUsers() {
+export default function ListOrganisations() {
   const router = useRouter();
 
   const { logOut } = useAuthContext();
 
-  const [data, setData] = useState<IUser[]>([]); // Users data
+  const [data, setData] = useState<IOrganisation[]>([]); // Organisations data
+
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
+
   const [pagination, setPagination] = useState<IPagination>({
     limit: 10,
     skip: 0,
@@ -56,16 +59,8 @@ export default function ListUsers() {
       _timestamp: -1,
     },
   });
-  const [fields, setFields] = useState<string[]>([
-    "_id",
-    "userName",
-    "firstName",
-    "lastName",
-    "email",
-    "phoneNumber",
-    "_timestamp",
-    "roles",
-  ]);
+
+  const [fields, setFields] = useState<string[]>([]);
 
   const [payload, setPayload] = useState<any>({
     fields: fields,
@@ -86,23 +81,14 @@ export default function ListUsers() {
     [payload]
   );
 
-  const fetchUsers = async (data: any) => {
-    let url = "/users";
+  const fetchOrganisations = async (data: any) => {
+    let url = "/organisations";
     return await axiosClient.post(url, data);
   };
 
   const [searchParams, setSearchParams] = useState<any>({
-    url: `${baseUrl}/listusers`,
-    searchFields: [
-      "_id",
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      "idNumber",
-      "kraPin",
-      "_timestamp",
-    ],
+    url: `${baseUrl}/listorganisations`,
+    searchFields: ["_id"],
     customQuery: {
       fields: fields,
       pagination: pagination,
@@ -110,13 +96,19 @@ export default function ListUsers() {
   });
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+
   const [rowSelection, setRowSelection] = useState({});
 
   const mutation: any = useMutation({
-    mutationKey: ["listUsers"],
-    mutationFn: (values) => fetchUsers(values),
+    mutationKey: ["listOrganisations"],
+    mutationFn: (values) => fetchOrganisations(values),
     onMutate: () => {
       setIsLoading(true);
     },
@@ -160,19 +152,13 @@ export default function ListUsers() {
     mutation.mutate(payload);
   }, [pagination]);
 
-  const handlePageChange = (newSkip: number) => {
-    setPagination((prevPagination) => ({
-      ...prevPagination,
-      skip: newSkip,
-    }));
-  };
-
   const table = useReactTable({
     data,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -197,15 +183,18 @@ export default function ListUsers() {
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">
-                Add User <IoPersonAddSharp className="ml-2 h-4 w-4" />
+                Add Organisation{" "}
+                <IoIosAddCircleOutline className="ml-2 h-4 w-4" />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Add User</DialogTitle>
-                <DialogDescription>Register a new user</DialogDescription>
+                <DialogTitle>Add Organisation</DialogTitle>
+                <DialogDescription>
+                  Register a new organisation
+                </DialogDescription>
               </DialogHeader>
-              <AddUserForm />
+              <AddOrganisationsForm />
             </DialogContent>
           </Dialog>
           <Button variant="outline" className="ml-auto">
@@ -218,36 +207,36 @@ export default function ListUsers() {
         <AppTable
           data={data}
           columns={columns}
-          rowNavigation={(row) => `/users/${row._id}`}
+          rowNavigation={(row) => `/organisations/${row._id}`}
           isLoading={isLoading}
         />
       </div>
 
-      <div className="flex items-center justify-center">
-        <PaginationComponent
-          skip={pagination.skip}
-          limit={pagination.limit}
-          dataLoading={isLoading}
-          dataLength={data.length}
-          onPageChange={handlePageChange}
-        />
+      <div className="flex items-center justify-center space-x-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </>
   );
 }
-const getTrueRoles = (userRoles: any[]): string[] => {
-  if (userRoles && userRoles.length > 0) {
-    const trueRoles = userRoles
-      .filter((role) => Object.values(role)[0] === true)
-      .map((role) => Object.keys(role)[0]);
 
-    return trueRoles;
-  } else {
-    return [];
-  }
-};
-
-const columns: ColumnDef<IUser>[] = [
+const columns: ColumnDef<IOrganisation>[] = [
   {
     accessorKey: "date",
     header: ({ column }) => {
@@ -262,13 +251,13 @@ const columns: ColumnDef<IUser>[] = [
       );
     },
     cell: ({ row }) => {
-      const user = row.original;
+      const organisation = row.original;
       return (
         <div className="flex flex-col gap-2">
           <div>
             <span className="font-medium text-sm">Created On:</span>{" "}
             <span className="text-xs">
-              <UseMoment format="DATE" timestamp={user?._timestamp} />
+              <UseMoment format="DATE" timestamp={organisation._timestamp} />
             </span>
           </div>
           <div>
@@ -276,7 +265,7 @@ const columns: ColumnDef<IUser>[] = [
             <span className="text-xs">
               <UseMoment
                 format="DATE"
-                timestamp={user?._timestamp ?? user?._timestamp}
+                timestamp={organisation?._timestamp ?? organisation?._timestamp}
               />
             </span>
           </div>
@@ -285,26 +274,31 @@ const columns: ColumnDef<IUser>[] = [
     },
   },
   {
-    accessorKey: "userDetails",
-    header: "User Details",
+    accessorKey: "founderDetails",
+    header: "Founder Details",
     cell: ({ row }) => {
-      const user = row.original;
+      const organisation = row.original;
       return (
         <div className="flex">
           <div className="flex flex-col gap-2">
             <div>
               <span className="font-medium text-sm">Full Name:</span>{" "}
               <span className="text-xs capitalize">
-                {user?.firstName ?? ""} {user?.lastName ?? ""}
+                {organisation?.founder?.firstName ?? ""}{" "}
+                {organisation?.founder?.lastName ?? ""}
               </span>
             </div>
             <div>
               <span className="font-medium text-sm">Email:</span>{" "}
-              <span className="text-xs">{user?.email ?? "N/A"}</span>
+              <span className="text-xs">
+                {organisation?.founder?.email ?? "N/A"}
+              </span>
             </div>
             <div>
               <span className="font-medium text-sm">Phone Number:</span>{" "}
-              <span className="text-xs">{user?.telephone1 ?? "N/A"}</span>
+              <span className="text-xs">
+                {organisation?.founder?.telephone1 ?? "N/A"}
+              </span>
             </div>
           </div>
         </div>
@@ -312,30 +306,22 @@ const columns: ColumnDef<IUser>[] = [
     },
   },
   {
-    accessorKey: "roles",
-    header: "Roles",
+    accessorKey: "boardNo",
+    header: "Board Number",
     cell: ({ row }) => {
-      const user = row.original;
-      const roles: string[] = getTrueRoles(user.roles);
-      return (
-        <div className="flex gap-2 items-center">
-          {roles.map((role, index) => (
-            <Badge key={index} variant="outline">
-              {role}
-            </Badge>
-          ))}
-        </div>
-      );
+      const organisation = row.original;
+
+      return <div className="">{organisation.board_no}</div>;
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const user = row.original;
+      const organisation = row.original;
       return (
-        <Badge variant={user.active ? "outline" : "destructive"}>
-          {user.active ? "Active" : "Deactived"}
+        <Badge variant={organisation.isActive ? "outline" : "destructive"}>
+          {organisation.isActive ? "Active" : "Deactived"}
         </Badge>
       );
     },

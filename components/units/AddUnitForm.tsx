@@ -22,15 +22,24 @@ import { useRouter } from "next/navigation";
 
 
 const formSchema = z.object({
-  name: z.string().min(2, {
+  unit: z.string().min(2, {
     message: "First name must be at least 2 characters.",
   }),
-  location: z.string().min(2, {
+  rooms: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  description: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  rent: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  status: z.string().min(2, {
     message: "Last name must be at least 2 characters.",
   }),
 });
 
-export function AddApartmentForm() {
+export function AddUnitForm() {
   const queryClient = useQueryClient();
 
   const router = useRouter();
