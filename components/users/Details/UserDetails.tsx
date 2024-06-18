@@ -27,7 +27,7 @@ const UserDetails: FC<UserDetails> = ({ _id }) => {
       <TabsContent value="basic">
         <BasicDetails _id={_id} />
       </TabsContent>
-      <TabsContent value="apartments">
+      <TabsContent value="apartments" className="h-full">
         <ListApartments />
       </TabsContent>
       <TabsContent value="inquiries">

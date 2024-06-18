@@ -166,7 +166,7 @@ export default function ListLeaveNotices({ _id }: { _id?: string }) {
     if (_id) {
       setPayload({ ...payload, ...{ _id } });
     }
-    
+
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -197,7 +197,7 @@ export default function ListLeaveNotices({ _id }: { _id?: string }) {
   });
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <Search
           searchParams={searchParams}
@@ -229,7 +229,7 @@ export default function ListLeaveNotices({ _id }: { _id?: string }) {
           onPageChange={handlePageChange}
         />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -307,7 +307,7 @@ const columns: ColumnDef<IApartment>[] = [
   },
   {
     accessorKey: "roles",
-    header: "Roles",
+    header: "Leaving Date",
     cell: ({ row }) => {
       // const user = row.original;
       // const roles: string[] = getTrueRoles(user.roles);
@@ -324,7 +324,7 @@ const columns: ColumnDef<IApartment>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Actions",
     cell: ({ row }) => {
       const user = row.original;
       return (

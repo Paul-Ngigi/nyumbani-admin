@@ -31,7 +31,7 @@ import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
 import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
 import { IApartment } from "@/interfaces/apartment.interface";
 import PaginationComponent from "../shared/Pagination";
 
@@ -134,7 +134,7 @@ export default function ListRepairs({ _id }: { _id?: string }) {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: '/auth/login' });
+          signOut({ callbackUrl: "/auth/login" });
         } else {
           toast({
             variant: "warning",
@@ -166,7 +166,7 @@ export default function ListRepairs({ _id }: { _id?: string }) {
     if (_id) {
       setPayload({ ...payload, ...{ _id } });
     }
-    
+
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -197,14 +197,14 @@ export default function ListRepairs({ _id }: { _id?: string }) {
   });
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <Search
           searchParams={searchParams}
           onSearchResults={handleSearchResults}
           onInputEmpty={handleInputEmpty}
         />
-        <div className="flex items-center gap-3">          
+        <div className="flex items-center gap-3">
           <Button variant="outline" className="ml-auto">
             Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
           </Button>
@@ -229,7 +229,7 @@ export default function ListRepairs({ _id }: { _id?: string }) {
           onPageChange={handlePageChange}
         />
       </div>
-    </>
+    </div>
   );
 }
 

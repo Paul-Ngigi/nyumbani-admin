@@ -23,7 +23,7 @@ import { IPagination } from "@/interfaces/pagination.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import PaginationComponent from "../shared/Pagination";
@@ -129,7 +129,7 @@ export default function ListComplaints({ _id }: { _id?: string }) {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: '/auth/login' });
+          signOut({ callbackUrl: "/auth/login" });
         } else {
           toast({
             variant: "warning",
@@ -161,7 +161,7 @@ export default function ListComplaints({ _id }: { _id?: string }) {
     if (_id) {
       setPayload({ ...payload, ...{ _id } });
     }
-    
+
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -192,13 +192,13 @@ export default function ListComplaints({ _id }: { _id?: string }) {
   });
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <Search
           searchParams={searchParams}
           onSearchResults={handleSearchResults}
           onInputEmpty={handleInputEmpty}
-        />        
+        />
       </div>
 
       <div className="rounded-md border">
@@ -219,7 +219,7 @@ export default function ListComplaints({ _id }: { _id?: string }) {
           onPageChange={handlePageChange}
         />
       </div>
-    </>
+    </div>
   );
 }
 

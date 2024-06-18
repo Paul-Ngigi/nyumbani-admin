@@ -151,7 +151,7 @@ export default function ListOrganisations({ _id }: { _id?: string }) {
     if (_id) {
       setPayload({ ...payload, ...{ _id } });
     }
-    
+
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -182,7 +182,7 @@ export default function ListOrganisations({ _id }: { _id?: string }) {
   });
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <Search
           searchParams={searchParams}
@@ -231,7 +231,7 @@ export default function ListOrganisations({ _id }: { _id?: string }) {
           onPageChange={handlePageChange}
         />
       </div>
-    </>
+    </div>
   );
 }
 
