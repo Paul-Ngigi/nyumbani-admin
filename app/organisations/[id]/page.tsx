@@ -1,5 +1,4 @@
-import ListTenants from "@/components/ListTenants";
-import ListUnits from "@/components/ListUnits";
+import ListApartments from "@/components/apartments/ListApartments";
 import BaseLayout from "@/components/shared/BaseLayout";
 import {
   Breadcrumb,
@@ -8,38 +7,28 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function page() {
+export default function page({ params: { id } }: { params: { id: string } }) {
   return (
     <BaseLayout>
       <div className="flex flex-col gap-4">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments">Apartments</BreadcrumbLink>
+              <BreadcrumbLink href="/organisations">
+                Organisations
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments?tenants">
-                Tenants
+              <BreadcrumbLink href="/apartments">
+                Organisation Apartments
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <Tabs defaultValue="tenants" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="tenants">Tenants</TabsTrigger>
-            <TabsTrigger value="units">Units</TabsTrigger>
-          </TabsList>
-          <TabsContent value="tenants">
-            <ListTenants />
-          </TabsContent>
-          <TabsContent value="units">
-            <ListUnits />
-          </TabsContent>
-        </Tabs>
+        <ListApartments _id={id} />
       </div>
     </BaseLayout>
   );

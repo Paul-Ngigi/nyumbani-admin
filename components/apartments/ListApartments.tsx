@@ -13,29 +13,25 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { listUsers } from "@/actions/UsersActions";
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { baseUrl } from "@/constants/urls";
-import { useAuthContext } from "@/context/auth-context/auth";
+import { IApartment } from "@/interfaces/apartment.interface";
 import { IPagination } from "@/interfaces/pagination.interface";
-import { IUser } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
-import { processHttpErrors } from "@/actions/ProcessHttpErrors";
+import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
-import { signOut } from 'next-auth/react';
-import { IApartment } from "@/interfaces/apartment.interface";
-import PaginationComponent from "../shared/Pagination";
 
-export default function ListApartments() {
+export default function ListApartments({ _id }: { _id?: string }) {
   const router = useRouter();
 
   const [data, setData] = useState<IApartment[]>([]); // Apartments data
@@ -50,16 +46,7 @@ export default function ListApartments() {
     },
   });
 
-  const [fields, setFields] = useState<string[]>([
-    "_id",
-    "userName",
-    "firstName",
-    "lastName",
-    "email",
-    "phoneNumber",
-    "_timestamp",
-    "roles",
-  ]);
+  const [fields, setFields] = useState<string[]>([]);
 
   const [payload, setPayload] = useState<any>({
     fields: fields,
@@ -132,7 +119,7 @@ export default function ListApartments() {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: '/auth/login' });
+          signOut({ callbackUrl: "/auth/login" });
         } else {
           toast({
             variant: "warning",
@@ -153,10 +140,18 @@ export default function ListApartments() {
   });
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, [pagination]);
 

@@ -30,7 +30,7 @@ import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
 
-export default function ListComplaints() {
+export default function ListComplaints({ _id }: { _id?: string }) {
   const router = useRouter();
 
   const { logOut } = useAuthContext();
@@ -150,10 +150,18 @@ export default function ListComplaints() {
   });
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+    
     mutation.mutate(payload);
   }, [pagination]);
 

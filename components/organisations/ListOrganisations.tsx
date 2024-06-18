@@ -42,7 +42,7 @@ import { IOrganisation } from "@/interfaces/organisation.interface";
 import PaginationComponent from "../shared/Pagination";
 import { AddOrganisationsForm } from "./AddOrganisationsForm";
 
-export default function ListOrganisations() {
+export default function ListOrganisations({ _id }: { _id?: string }) {
   const [data, setData] = useState<IOrganisation[]>([]); // Organisations data
 
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
@@ -140,10 +140,18 @@ export default function ListOrganisations() {
   });
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+    
     mutation.mutate(payload);
   }, [pagination]);
 

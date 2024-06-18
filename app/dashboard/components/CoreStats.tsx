@@ -7,11 +7,11 @@ import { RiAuctionLine } from "react-icons/ri";
 import { SwiperSlide } from "swiper/react";
 
 export default function CoreStats() {
-  const revenue: number = 200000;
-  const apartments: number = 14;
-  const tenants: number = 200;
-  const houseManagers: number = 14;
-  const agents: number = 4;
+  const revenue: number = 0;
+  const apartments: number = 0;
+  const tenants: number = 0;
+  const houseManagers: number = 0;
+  const agents: number = 2;
   return (
     <div className="max-w-screen overflow-hidden">
       <SwiperCustom>

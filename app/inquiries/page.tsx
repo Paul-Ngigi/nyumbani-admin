@@ -16,12 +16,12 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/inquiires">Inquiires</BreadcrumbLink>
+              <BreadcrumbLink href="/Inquiries">Inquiries</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Inquiires</h1>
+        <h1 className="font-bold">Inquiries</h1>
 
         <ListInquiries/>
       </div>

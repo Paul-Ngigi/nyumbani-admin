@@ -3,13 +3,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FC } from "react";
 import BasicDetails from "./BasicDetails";
+import ListApartments from "@/components/apartments/ListApartments";
+import ListInquiries from "@/components/inquiries/ListInquiries";
+import ListComplaints from "@/components/complaints/ListComplaints";
+import ListLeaveNotices from "@/components/leave-notices/ListLeaveNotices";
 
 interface UserDetails {
   _id: string;
 }
 
 const UserDetails: FC<UserDetails> = ({ _id }) => {
-  
   return (
     <Tabs defaultValue="basic">
       <TabsList>
@@ -24,11 +27,19 @@ const UserDetails: FC<UserDetails> = ({ _id }) => {
       <TabsContent value="basic">
         <BasicDetails _id={_id} />
       </TabsContent>
-      <TabsContent value="apartments">Apartments.</TabsContent>
-      <TabsContent value="inquiries">Inquiries.</TabsContent>
-      <TabsContent value="complaints">Complaints.</TabsContent>
+      <TabsContent value="apartments">
+        <ListApartments />
+      </TabsContent>
+      <TabsContent value="inquiries">
+        <ListInquiries />
+      </TabsContent>
+      <TabsContent value="complaints">
+        <ListComplaints />
+      </TabsContent>
       <TabsContent value="arrears">Arrears.</TabsContent>
-      <TabsContent value="leave">Leave Notice.</TabsContent>
+      <TabsContent value="leave">
+        <ListLeaveNotices />
+      </TabsContent>
       <TabsContent value="payments">Payments.</TabsContent>
     </Tabs>
   );

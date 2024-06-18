@@ -31,11 +31,11 @@ import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
 import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
 import { IApartment } from "@/interfaces/apartment.interface";
 import PaginationComponent from "../shared/Pagination";
 
-export default function ListApartments() {
+export default function ListTransactions({ _id }: { _id?: string }) {
   const router = useRouter();
 
   const { logOut } = useAuthContext();
@@ -134,7 +134,7 @@ export default function ListApartments() {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: '/auth/login' });
+          signOut({ callbackUrl: "/auth/login" });
         } else {
           toast({
             variant: "warning",
@@ -155,10 +155,18 @@ export default function ListApartments() {
   });
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+    
     mutation.mutate(payload);
   }, [pagination]);
 

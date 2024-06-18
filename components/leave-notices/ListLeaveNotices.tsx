@@ -35,7 +35,7 @@ import { signOut } from 'next-auth/react';
 import { IApartment } from "@/interfaces/apartment.interface";
 import PaginationComponent from "../shared/Pagination";
 
-export default function ListLeaveNotices() {
+export default function ListLeaveNotices({ _id }: { _id?: string }) {
   const router = useRouter();
 
   const { logOut } = useAuthContext();
@@ -155,10 +155,18 @@ export default function ListLeaveNotices() {
   });
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    if (_id) {
+      setPayload({ ...payload, ...{ _id } });
+    }
+    
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -196,14 +204,7 @@ export default function ListLeaveNotices() {
           onSearchResults={handleSearchResults}
           onInputEmpty={handleInputEmpty}
         />
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="ml-auto"
-            onClick={() => router.push("apartments/add-apartment")}
-          >
-            Add Apartment <IoPersonAddSharp className="ml-2 h-4 w-4" />
-          </Button>
+        <div className="flex items-center gap-3">          
           <Button variant="outline" className="ml-auto">
             Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
           </Button>

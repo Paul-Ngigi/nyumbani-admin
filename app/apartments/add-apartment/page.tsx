@@ -33,8 +33,7 @@ export default function Page() {
             <CardTitle>New Apartments Form</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
-            {/* <AddApartmentForm /> */}
-            <AddUnitForm />
+            <AddApartmentForm />            
           </CardContent>
         </Card>
       </div>

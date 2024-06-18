@@ -38,16 +38,16 @@ export function AddApartmentForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const mutation = useMutation({
-    mutationKey: ["addUser"],
-    mutationFn: (values: any) => addUser(values),
+    mutationKey: ["addApartment"],
+    mutationFn: (values: any) => addApartment(values),
     onMutate: () => {
       setIsLoading(true);
     },
     onSuccess: () => {
       toast.success("Success");
-      queryClient.invalidateQueries({ queryKey: ["listUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["listApartments"] });
       setIsLoading(false);
-      router.push("/users");
+      router.push("/apartments");
     },
     onError: (err) => {
       toast.error(err.message);
@@ -64,6 +64,8 @@ export function AddApartmentForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log({values});
+    
     mutation.mutate(values);
   }
 
@@ -105,7 +107,7 @@ export function AddApartmentForm() {
   );
 }
 
-const addUser = async (data: any) => {
-  let url = "/users/new";
+const addApartment = async (data: any) => {
+  let url = "/apartments/new";
   return await axiosClient.post(url, data);
 };
