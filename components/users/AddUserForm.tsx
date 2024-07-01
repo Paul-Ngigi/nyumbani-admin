@@ -109,7 +109,7 @@ export function AddUserForm() {
             <FormItem>
               <FormLabel>First Name</FormLabel>
               <FormControl>
-                <Input placeholder="Paul" {...field} />
+                <Input placeholder="First Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,7 +122,7 @@ export function AddUserForm() {
             <FormItem>
               <FormLabel>Last Name</FormLabel>
               <FormControl>
-                <Input placeholder="Ngigi" className="input-field" {...field} />
+                <Input placeholder="Last Name" className="input-field" {...field} />
               </FormControl>
 
               <FormMessage />
@@ -137,7 +137,7 @@ export function AddUserForm() {
               <FormLabel>Email Address</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="paul@gmail.com"
+                  placeholder="email@gmail.com"
                   className="input-field"
                   {...field}
                 />

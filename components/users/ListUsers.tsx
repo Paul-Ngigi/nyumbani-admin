@@ -7,12 +7,12 @@ import {
   VisibilityState,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import * as React from "react";
 
+import { currentUserOrganisationID, currentUserRoles, isAdmin, isAgent, isClient, isSuperAdmin } from "@/actions/AppService";
 import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
@@ -27,24 +27,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { baseUrl } from "@/constants/urls";
-import { useAuthContext } from "@/context/auth-context/auth";
+import { ApiResponse } from "@/interfaces/api.response.interface";
 import { IPagination } from "@/interfaces/pagination.interface";
 import { IUser } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
+import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
 import { AddUserForm } from "./AddUserForm";
-import PaginationComponent from "../shared/Pagination";
+import { UsersReportForm } from "./UsersReportForm";
+
+/* eslint-disable react-hooks/exhaustive-deps */
 
 export default function ListUsers() {
-  const [data, setData] = useState<IUser[]>([]); // Users data
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader state
+  const [data, setData] = useState<IUser[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<IPagination>({
     limit: 10,
     skip: 0,
@@ -61,7 +63,15 @@ export default function ListUsers() {
     "phoneNumber",
     "_timestamp",
     "roles",
-  ]);
+  ]);  
+
+  const organisationID = currentUserOrganisationID();
+  const rolesArray = currentUserRoles() || [];
+
+  const superAdmin = isSuperAdmin(rolesArray);
+  const admin = isAdmin(rolesArray);
+  const agent = isAgent(rolesArray);
+  const client = isClient(rolesArray);
 
   const [payload, setPayload] = useState<any>({
     fields: fields,
@@ -106,8 +116,11 @@ export default function ListUsers() {
   });
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
   const mutation: any = useMutation({
@@ -118,7 +131,7 @@ export default function ListUsers() {
     },
     onSuccess: (data) => {
       setIsLoading(false);
-      const res = data.data.data;
+      const res: ApiResponse = data.data.data;
       if (res.Status === 200) {
         setData(res.Payload);
       } else {
@@ -148,11 +161,28 @@ export default function ListUsers() {
     },
   });
 
+  const updateFields = () => {
+    if (superAdmin) {
+      setPayload({
+        fields: fields,
+        pagination: pagination,
+      });
+    } else if (admin) {
+      setPayload({
+        fields: fields,
+        pagination: pagination,
+        organisationID: organisationID,
+      });
+    }
+  };
+
   useEffect(() => {
+    updateFields();
     mutation.mutate(payload);
   }, []);
 
   useEffect(() => {
+    updateFields();
     mutation.mutate(payload);
   }, [pagination]);
 
@@ -204,9 +234,20 @@ export default function ListUsers() {
               <AddUserForm />
             </DialogContent>
           </Dialog>
-          <Button variant="outline" className="ml-auto">
-            Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                Download Report{" "}
+                <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Download report</DialogTitle>                
+              </DialogHeader>
+              <UsersReportForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

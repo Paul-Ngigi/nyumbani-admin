@@ -1,4 +1,4 @@
-import ListUsers from "@/components/users/ListUsers";
+  import ListUsers from "@/components/users/ListUsers";
 import BaseLayout from "@/components/shared/BaseLayout";
 import {
   Breadcrumb,
@@ -15,7 +15,7 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/apartments">Users</BreadcrumbLink>
+              <BreadcrumbLink href="/users">Users</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

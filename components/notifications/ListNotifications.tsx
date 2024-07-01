@@ -35,6 +35,8 @@ import { signOut } from 'next-auth/react';
 import { IApartment } from "@/interfaces/apartment.interface";
 import PaginationComponent from "../shared/Pagination";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 export default function ListNotifications({ _id }: { _id?: string }) {
   const router = useRouter();
 

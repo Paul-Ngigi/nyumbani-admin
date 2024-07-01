@@ -31,6 +31,8 @@ import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 export default function ListApartments({ _id }: { _id?: string }) {
   const router = useRouter();
 
@@ -193,7 +195,7 @@ export default function ListApartments({ _id }: { _id?: string }) {
           <Button
             variant="outline"
             className="ml-auto"
-            onClick={() => router.push("apartments/add-apartment")}
+            onClick={() => router.push("apartments/add-apartment/step_one")}
           >
             Add Apartment <IoPersonAddSharp className="ml-2 h-4 w-4" />
           </Button>

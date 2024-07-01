@@ -21,7 +21,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
       </div>
 
       <div className="hidden lg:block">
-        <div className="flex h-screen">
+        <div className="flex min-h-screen h-full">
           <div className="w-1/2">
             <Image
               src="/image/apartment.jpg"
@@ -32,11 +32,11 @@ export default function layout({ children }: { children: React.ReactNode }) {
               height={500}
             />
           </div>
-          <div className="w-1/2 p-8">
+          <div className="w-1/2 p-8 flex flex-col gap-8">
             <div className="w-full flex justify-between items-center">
               <Logo />
             </div>
-            <div className="h-full w-full mt-24">{children}</div>
+            {children}
           </div>
         </div>
       </div>

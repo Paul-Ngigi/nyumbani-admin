@@ -13,6 +13,6 @@ export async function POST(req: NextRequest) {
       { status: response.status }
     );
   }
-  const users = response;  
-  return NextResponse.json(users);
+  const notifications = response;  
+  return NextResponse.json(notifications);
 }

@@ -7,12 +7,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();  
   const response = await makeRequest<any>(req, "POST", url, body);
   if (response.error) {
-    console.error("Error creating user:", response.error);
+    console.error("Error creating notification:", response.error);
     return NextResponse.json(
       { error: response.error },
       { status: response.status }
     );
   }
-  const user = response;  
-  return NextResponse.json(user);
+  const notification = response;  
+  return NextResponse.json(notification);
 }

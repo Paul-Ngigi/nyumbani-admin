@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();  
   const response = await makeRequest<any>(req, "POST", url, body);
   if (response.error) {
-    console.error("Error creating adminaddapartments:", response.error);
+    console.error("Error creating inquiries:", response.error);
     return NextResponse.json(
       { error: response.error },
       { status: response.status }

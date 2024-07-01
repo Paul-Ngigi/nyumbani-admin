@@ -7,13 +7,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json();  
   const response = await makeRequest<any>(req, "POST", url, body);
   if (response.error) {
-    console.error("Error fetching apartments details:", response.error);
+    console.error("Error fetching complaints", response.error);
     return NextResponse.json(
       { error: response.error },
       { status: response.status }
     );
   }
-  const apartments = response;
-  console.log({apartments});
-  return NextResponse.json(apartments);
+  const complaints = response;
+  console.log({complaints});
+  return NextResponse.json(complaints);
 }

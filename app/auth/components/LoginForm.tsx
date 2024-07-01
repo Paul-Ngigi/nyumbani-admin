@@ -56,20 +56,19 @@ export default function LoginForm() {
         redirect: false,
       });
       setIsLoading(false);
-      console.log({ response });
-      if (!response?.error) {
+
+      if (!response.ok) {        
+        return toast({
+          variant: "destructive",
+          title: "Ooops! Something went wrong",
+          description: "Invalid email/password",
+        });
+      } else {
         router.push("/");
         router.refresh();
       }
-
-      if (!response.ok) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Credentials",
-          description: "Invalid email/password.",
-        });
-      }
     } catch (error: any) {
+      setIsLoading(false);
       toast({
         variant: "destructive",
         title: "Ooops! Something went wrong",
@@ -80,11 +79,7 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 max-w-md mx-auto"
-      >
-        <div className="text-2xl font-bold mb-4">Login</div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <FormField
           control={form.control}
           name="email"
@@ -133,8 +128,19 @@ export default function LoginForm() {
         </div>
 
         <Button type="submit" size="lg" className="w-full">
-          {isLoading ? "loading..." : "Login"}
+          {isLoading ? "Loading..." : "Sign In"}
         </Button>
+
+        <div>
+          Don&apos;t have an account yet?{" "}
+          <Link
+            href="/auth/register"
+            passHref
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Sign Up
+          </Link>
+        </div>
       </form>
     </Form>
   );

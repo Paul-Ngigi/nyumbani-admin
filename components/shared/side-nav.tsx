@@ -1,35 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { getTrueRoles } from "@/actions/AppService";
 import { SIDENAV_ITEMS } from "@/constants";
 import { SideNavItem } from "@/types";
 import { Icon } from "@iconify/react";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { getTrueRoles } from "@/actions/AppService";
 import Logo from "../Logo";
 
 const SideNav = () => {
   const { data: session, status } = useSession();
-  console.log(session);
+
   const rolesArray = session?.roles || [];
 
-  const userRoles = rolesArray.reduce((acc: any, roleObj: any) => {
-    Object.keys(roleObj).forEach((role) => {
-      if (roleObj[role]) acc.add(role);
-    });
-    return acc;
-  }, new Set());
+  const trueRoles = getTrueRoles(rolesArray);
 
-  console.log(userRoles);
-
-  // const filteredItems = SIDENAV_ITEMS.filter(item =>
-  //   item.roles.some(role => trueRoles.has(role))
-  // );
+  const filteredItems = SIDENAV_ITEMS.filter((item) =>
+    item.roles ? item.roles.some((role) => trueRoles.includes(role)) : true
+  );
 
   return (
     <div className="md:w-60 bg-white h-screen flex-1 fixed border-r border-zinc-200 hidden md:flex">
@@ -42,7 +34,7 @@ const SideNav = () => {
         </Link>
 
         <div className="flex flex-col space-y-2  md:px-6 ">
-          {SIDENAV_ITEMS.map((item, idx) => {
+          {filteredItems.map((item, idx) => {
             return <MenuItem key={idx} item={item} />;
           })}
         </div>

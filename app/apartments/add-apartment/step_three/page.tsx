@@ -1,3 +1,4 @@
+import { ApartmentHouseForm } from "@/components/apartments/ApartmentHouseForm";
 import BaseLayout from "@/components/shared/BaseLayout";
 import {
   Breadcrumb,
@@ -7,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddUserForm } from "@/components/users/AddUserForm";
 
 export default function Page() {
   return (
@@ -16,23 +16,29 @@ export default function Page() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/users">Users</BreadcrumbLink>
+              <BreadcrumbLink href="/apartments">Apartments</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink>Add User</BreadcrumbLink>
+              <BreadcrumbLink>Add Apartment</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/apartments/add-apartment/step_one">
+                Apartments Details
+              </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="font-bold">Add User</h1>
+        <h1 className="font-bold">Add Apartments</h1>
 
         <Card>
           <CardHeader>
-            <CardTitle>New User Form</CardTitle>
+            <CardTitle>New Apartments Form</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <AddUserForm />
+            <ApartmentHouseForm />
           </CardContent>
         </Card>
       </div>

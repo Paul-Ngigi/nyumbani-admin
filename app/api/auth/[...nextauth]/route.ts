@@ -35,7 +35,8 @@ const handler = NextAuth({
         if (res && res.data.Status === 200) {
           const user = await res.data.Payload;
           const jwt = user.token;
-          const roles = user.roles;          
+          const roles = user.roles;   
+          const organisationID = user?.organisationID || "";          
 
           return {
             ...credentials,
@@ -55,7 +56,8 @@ const handler = NextAuth({
         return {
           ...token,
           jwt: user.jwt,
-          roles: user.roles
+          roles: user.roles,
+          organisationID: user.organisationID
         };
       }
       return token;
@@ -64,6 +66,7 @@ const handler = NextAuth({
       if (token) {
         session.jwt = token.jwt;
         session.roles = token.roles;
+        session.organisationID = token.organisationID;
       }
       return session;
     },

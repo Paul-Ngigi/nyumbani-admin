@@ -42,6 +42,8 @@ import { IOrganisation } from "@/interfaces/organisation.interface";
 import PaginationComponent from "../shared/Pagination";
 import { AddOrganisationsForm } from "./AddOrganisationsForm";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 export default function ListOrganisations({ _id }: { _id?: string }) {
   const [data, setData] = useState<IOrganisation[]>([]); // Organisations data
 

@@ -7,61 +7,62 @@ import { MdApartment, MdOutlinePayment } from "react-icons/md";
 import { RxDashboard } from "react-icons/rx";
 import { SlQuestion } from "react-icons/sl";
 import { SideNavItem } from "./types";
+import { AppEnums } from "./enums/app.enum";
 
 export const SIDENAV_ITEMS: SideNavItem[] = [
   {
     title: "Dashboard",
     path: "/",
     icon: <RxDashboard />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Organisations",
     path: "/organisations",
     icon: <CgOrganisation />,
-    roles: ["SUPER_ADMIN"],
+    roles: [AppEnums.RoleSuperAdmin],
   },
   {
     title: "Users",
     path: "/users",
     icon: <FaUsers />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Apartments",
     path: "/apartments",
     icon: <MdApartment />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Inquiries",
     path: "/inquiries",
     icon: <SlQuestion />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Complaints",
     path: "/complaints",
     icon: <BsExclamationOctagon />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Leave Notices",
     path: "/leave-notices",
     icon: <GiAwareness />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Repairs",
     path: "/repairs",
     icon: <GiAutoRepair />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Notifications",
     path: "/notifications",
     icon: <IoIosNotificationsOutline />,
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   {
     title: "Transactions",
@@ -73,7 +74,7 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
       { title: "Mobile", path: "/transactions/mobile" },
       { title: "Card", path: "/transactions/card" },
     ],
-    roles: ["SUPER_ADMIN", "ADMIN", "agent"],
+    roles: [AppEnums.RoleSuperAdmin, AppEnums.RoleAdmin, AppEnums.RoleAgent],
   },
   // {
   //   title: "User Manual",

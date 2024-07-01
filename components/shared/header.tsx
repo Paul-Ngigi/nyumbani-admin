@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useSelectedLayoutSegment, useRouter } from "next/navigation";                                                                                                                        
+import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 
 import useScroll from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 
-import { signOut } from "next-auth/react";
+import { isSuperAdmin } from "@/actions/AppService";
+import { signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -16,17 +17,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useAuthContext } from "@/context/auth-context/auth";
 
 const Header = () => {
   const router = useRouter();
-  const { logOut } = useAuthContext();
+  const { data: session, status } = useSession();
+
+  const rolesArray = session?.roles || [];
+
+  const superAdmin = isSuperAdmin(rolesArray);
 
   const scrolled = useScroll(5);
   const selectedLayout = useSelectedLayoutSegment();
 
   const handleLogout = async () => {
-    signOut({ callbackUrl: '/auth/login' });
+    signOut({ callbackUrl: "/auth/login" });
+  };
+
+  const handleRbac = async () => {
+    router.push("/rbac");
   };
 
   return (
@@ -61,7 +69,11 @@ const Header = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Roles & Permissions</DropdownMenuItem>
+              {superAdmin && (
+                <DropdownMenuItem onClick={handleRbac}>
+                  Roles & Permissions
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

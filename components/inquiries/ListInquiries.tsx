@@ -13,27 +13,26 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { listUsers } from "@/actions/UsersActions";
+import { processHttpErrors } from "@/actions/ProcessHttpErrors";
 import AppTable from "@/components/shared/AppTable";
 import UseMoment from "@/components/shared/use-moment";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { baseUrl } from "@/constants/urls";
 import { useAuthContext } from "@/context/auth-context/auth";
+import { IApartment } from "@/interfaces/apartment.interface";
 import { IPagination } from "@/interfaces/pagination.interface";
-import { IUser } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axios-client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowUpDown } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { IoCloudDownloadOutline, IoPersonAddSharp } from "react-icons/io5";
-import { processHttpErrors } from "@/actions/ProcessHttpErrors";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
-import { signOut } from 'next-auth/react';
-import { IApartment } from "@/interfaces/apartment.interface";
-import PaginationComponent from "../shared/Pagination";
+
+/* eslint-disable react-hooks/exhaustive-deps */
 
 export default function ListInquiries({ _id }: { _id?: string }) {
   const router = useRouter();
@@ -134,7 +133,7 @@ export default function ListInquiries({ _id }: { _id?: string }) {
             title: "Invalid token",
             description: "User token has expired",
           });
-          signOut({ callbackUrl: '/auth/login' });
+          signOut({ callbackUrl: "/auth/login" });
         } else {
           toast({
             variant: "warning",
@@ -204,7 +203,7 @@ export default function ListInquiries({ _id }: { _id?: string }) {
           onSearchResults={handleSearchResults}
           onInputEmpty={handleInputEmpty}
         />
-        <div className="flex items-center gap-3">          
+        <div className="flex items-center gap-3">
           <Button variant="outline" className="ml-auto">
             Download Report <IoCloudDownloadOutline className="ml-2 h-4 w-4" />
           </Button>

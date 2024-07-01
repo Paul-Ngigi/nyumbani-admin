@@ -34,6 +34,8 @@ import { toast } from "../ui/use-toast";
 import { signOut } from 'next-auth/react';
 import { IApartment } from "@/interfaces/apartment.interface";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 export default function ListApartments() {
   const router = useRouter();
 

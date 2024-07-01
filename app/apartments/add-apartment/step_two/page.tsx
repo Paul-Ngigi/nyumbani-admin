@@ -1,4 +1,4 @@
-import { AddApartmentForm } from "@/components/apartments/AddApartmentForm";
+import { ApartmentPaymentDetailsForm } from "@/components/apartments/ApartmentPaymentDetailsForm";
 import BaseLayout from "@/components/shared/BaseLayout";
 import {
   Breadcrumb,
@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddUnitForm } from "@/components/units/AddUnitForm";
 
 export default function Page() {
   return (
@@ -23,6 +22,12 @@ export default function Page() {
             <BreadcrumbItem>
               <BreadcrumbLink>Add Apartment</BreadcrumbLink>
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/apartments/add-apartment/step_one">
+                Payment Details
+              </BreadcrumbLink>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
@@ -33,7 +38,7 @@ export default function Page() {
             <CardTitle>New Apartments Form</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <AddApartmentForm />            
+            <ApartmentPaymentDetailsForm />
           </CardContent>
         </Card>
       </div>

@@ -7,13 +7,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json();  
   const response = await makeRequest<any>(req, "POST", url, body);
   if (response.error) {
-    console.error("Error updating organisation:", response.error);
+    console.error("Error updating leave_notice:", response.error);
     return NextResponse.json(
       { error: response.error },
       { status: response.status }
     );
   }
-  const organisation = response;
-  console.log({organisation});
-  return NextResponse.json(organisation);
+  const leave_notices = response;
+  console.log({leave_notices});
+  return NextResponse.json(leave_notices);
 }

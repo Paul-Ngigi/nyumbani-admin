@@ -30,6 +30,8 @@ import PaginationComponent from "../shared/Pagination";
 import Search from "../shared/Search";
 import { toast } from "../ui/use-toast";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 export default function ListComplaints({ _id }: { _id?: string }) {
   const router = useRouter();
 

@@ -25,7 +25,7 @@ interface ReusableTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   rowNavigation?: (row: T) => string;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 function AppTable<T>({
